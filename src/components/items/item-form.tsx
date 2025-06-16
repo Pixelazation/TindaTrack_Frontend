@@ -1,3 +1,4 @@
+import { createItem } from '../../api/items';
 import { Button } from '../ui/button';
 import { DialogTitle } from '../ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
@@ -16,9 +17,14 @@ const itemFormSchema = z.object({
     message: "Item name must be at least 2 characters.",
   }),
   unitPrice: z
-    .string()
-    .refine((val) => /^\d{1,16}(\.\d{1,2})?$/.test(val), {
-      message: "Price must be a number with up to 2 decimal places and max 18 digits total",
+    .number({
+      required_error: "Unit price is required",
+      invalid_type_error: "Unit price must be a number",
+    })
+    .positive("Price must be greater than 0")
+    .max(999999999999.99, "Maximum allowed is 14 digits with 2 decimal places")
+    .refine((val) => Number.isInteger(val * 100), {
+      message: "Price must have at most 2 decimal places",
     }),
   description: z.string().max(200, {
     message: "Description must be at most 200 characters.",
@@ -37,13 +43,20 @@ export default function ItemForm(props: Props) {
     defaultValues: {
       itemCode: '',
       name: '',
-      unitPrice: '',
+      unitPrice: 0,
       description: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof itemFormSchema>) {
+  async function onSubmit(values: z.infer<typeof itemFormSchema>) {
     console.log("Form submitted with values:", values);
+
+    try {
+      await createItem(values);
+    } catch (error) {
+      console.error("Failed to create item:", error);
+    }
+
     closeForm();
   }
 
@@ -75,7 +88,7 @@ export default function ItemForm(props: Props) {
               control={form.control}
               name="itemCode"
               render={({ field }) => (
-                <FormItem className="grow">
+                <FormItem className="grow flex flex-col justify-start">
                   <FormLabel>Item Code</FormLabel>
                   <FormControl>
                     <Input placeholder="ex. CODE001" {...field} />
@@ -89,10 +102,10 @@ export default function ItemForm(props: Props) {
               control={form.control}
               name="unitPrice"
               render={({ field }) => (
-                <FormItem className="w-1/3">
+                <FormItem className="w-1/3 flex flex-col justify-start">
                   <FormLabel>Unit Price (PHP)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0.00" {...field} />
+                    <Input type="number" placeholder="0.00" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
