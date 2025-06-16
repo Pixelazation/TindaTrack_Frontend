@@ -4,7 +4,10 @@ import type { ColumnDef } from "@tanstack/react-table"
 import type { Item } from '../../types/item'
 import { Button } from '../ui/button';
 
-export const itemColumns = (onEdit: (item: Item) => void): ColumnDef<Item>[] => [
+export const itemColumns = (
+  onEdit: (item: Item) => void,
+  onDelete: (item: Item) => void
+): ColumnDef<Item>[] => [
   {
     accessorKey: 'name',
     header: 'Name',
@@ -27,13 +30,18 @@ export const itemColumns = (onEdit: (item: Item) => void): ColumnDef<Item>[] => 
     cell: row => row.getValue() || '-',
   },
   {
-    id: "edit",
+    id: "actions",
     cell: ({ row }) => {
       const item = row.original;
       return (
-        <Button onClick={() => onEdit(item)}>
-          Edit
-        </Button>
+        <div className='space-x-2'> 
+          <Button onClick={() => onEdit(item)}>
+            Edit
+          </Button>
+          <Button variant="destructive" onClick={() => onDelete(item)}>
+            Delete
+          </Button>
+        </div>
       )
     },
   },

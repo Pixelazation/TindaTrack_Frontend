@@ -15,3 +15,8 @@ export async function editItem(id: number, data: CreateItemDTO) {
   const res = await api.put(`/items/${id}`, data);
   return res.data;
 }
+
+export async function deleteItem(id: number) {
+  const res = await api.delete(`/items/${id}`);
+  return res.data;
+}
