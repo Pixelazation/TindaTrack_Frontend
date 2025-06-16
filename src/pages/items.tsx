@@ -5,29 +5,48 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import ItemForm from '../components/items/item-form';
 import { fetchItems } from '../api/items';
 import type { Item } from '../types/item';
+import { DataTable } from '../components/ui/data-table';
+import { itemColumns } from '../components/items/item-columns';
 
 export default function Items() {
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [items, setItems] = useState<Item[]>([]);
+  const [editItem, setEditItem] = useState<Item | null>(null);
+
+  async function loadItems() {
+    try {
+      const data = await fetchItems();
+      setItems(data);
+    } catch (error) {
+      console.error("Failed to fetch items:", error);
+    }
+  }
+
+  function handleAdd() {
+    setEditItem(null);
+    setOpenForm(true);
+  }
+
+  function handleEdit(item: Item) {
+    setEditItem(item);
+    setOpenForm(true);
+  }
 
   useEffect(() => {
-    async function loadItems() {
-      try {
-        const data = await fetchItems();
-        setItems(data);
-      } catch (error) {
-        console.error("Failed to fetch items:", error);
-      }
-    }
     loadItems();
-  });
+  }, []);
+
+  useEffect(() => {
+    if (!openForm)
+      loadItems();
+  }, [openForm]);
 
   return (
     <div className='px-32 py-8'>
 
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         <DialogContent>
-          <ItemForm closeForm={() => setOpenForm(false)}/>
+          <ItemForm closeForm={() => setOpenForm(false)} item={editItem}/>
         </DialogContent>
       </Dialog>
 
@@ -35,19 +54,12 @@ export default function Items() {
         <h1 className='text-3xl font-bold text-primary'>
           Items
         </h1>
-        <Button onClick={() => setOpenForm(true)}>
+        <Button onClick={handleAdd}>
           <LucidePlus /> Add Item
         </Button>
       </div>
 
-      {items.map((item) => (
-        <div key={item.id} className='mb-4 p-4 border rounded-lg shadow-sm'>
-          <h2 className='text-xl font-semibold'>{item.name}</h2>
-          <p className='text-gray-600'>Code: {item.itemCode}</p>
-          <p className='text-gray-600'>Price: PHP {item.unitPrice.toFixed(2)}</p>
-          <p className='text-gray-600'>Description: {item.description}</p>
-        </div>
-      ))}
+      <DataTable columns={itemColumns(handleEdit)} data={items} />
       
     </div>
   )

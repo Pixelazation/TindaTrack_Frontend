@@ -1,4 +1,5 @@
-import { createItem } from '../../api/items';
+import { createItem, editItem } from '../../api/items';
+import type { Item } from '../../types/item';
 import { Button } from '../ui/button';
 import { DialogTitle } from '../ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
@@ -33,14 +34,19 @@ const itemFormSchema = z.object({
 
 interface Props {
   closeForm: () => void;
+  item: Item | null;
 }
 
 export default function ItemForm(props: Props) {
-  const { closeForm } = props;
+  const { closeForm, item } = props;
+
+  const isEdit = item !== null;
 
   const form = useForm<z.infer<typeof itemFormSchema>>({
     resolver: zodResolver(itemFormSchema),
-    defaultValues: {
+    defaultValues: isEdit ? {
+      ...item
+    } : {
       itemCode: '',
       name: '',
       unitPrice: 0,
@@ -52,7 +58,10 @@ export default function ItemForm(props: Props) {
     console.log("Form submitted with values:", values);
 
     try {
-      await createItem(values);
+      if (isEdit)
+        await editItem(item.id, values);
+      else
+        await createItem(values);
     } catch (error) {
       console.error("Failed to create item:", error);
     }
@@ -63,7 +72,7 @@ export default function ItemForm(props: Props) {
   return (
     <>
       <DialogTitle className="text-3xl font-bold text-primary mb-4">
-        Create New Item
+        {isEdit ? 'Edit' : 'Create New'} Item
       </DialogTitle>
 
       <Form {...form}>
