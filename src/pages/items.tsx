@@ -7,8 +7,7 @@ import { deleteItem, fetchItems } from '../api/items';
 import type { Item } from '../types/item';
 import { DataTable } from '../components/ui/data-table';
 import { itemColumns } from '../components/items/item-columns';
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogFooter, AlertDialogTitle } from '../components/ui/alert-dialog';
-import { AlertDialogCancel } from '@radix-ui/react-alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogTitle } from '../components/ui/alert-dialog';
 
 export default function Items() {
   const [openForm, setOpenForm] = useState<boolean>(false);
@@ -79,7 +78,6 @@ export default function Items() {
             <AlertDialogAction onClick={handleConfirmDelete}>Yes, delete it</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-
       </AlertDialog>
 
       <div className='flex flex-row items-center justify-between mb-8'>
