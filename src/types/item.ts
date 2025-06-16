@@ -5,3 +5,5 @@ export type Item = {
   description: string;
   unitPrice: number;
 };
+
+export type CreateItemDTO = Omit<Item, "id">;
