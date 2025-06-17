@@ -1,8 +1,13 @@
-import type { CreateItemDTO } from '../types/item';
+import type { CreateItemDTO, Item } from '../types/item';
 import api from "./axios";
 
-export async function fetchItems() {
+export async function fetchItems(): Promise<Item[]> {
   const res = await api.get("/items");
+  return res.data;
+}
+
+export async function fetchItem(id: number): Promise<Item> {
+  const res = await api.get(`/items/${id}`);
   return res.data;
 }
 

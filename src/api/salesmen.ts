@@ -6,6 +6,11 @@ export async function fetchSalesmen(): Promise<Salesman[]> {
   return res.data;
 }
 
+export async function fetchAccount(id: number): Promise<Salesman> {
+  const res = await api.get(`/salesmen/${id}`);
+  return res.data;
+}
+
 export async function createSalesman(data: CreateSalesmanDTO) {
   const res = await api.post("/salesmen", data);
   return res.data;
