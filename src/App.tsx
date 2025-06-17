@@ -6,8 +6,16 @@ import Salesmen from './pages/salesmen';
 import MainLayout from './layouts/main-layout';
 import Accounts from './pages/accounts';
 import Orders from './pages/orders';
+import { useLocationDropdown } from './stores/locations';
+import { useEffect } from 'react';
 
 function App() {
+  const { setMunicipalities } = useLocationDropdown();
+
+  useEffect(() => {
+    setMunicipalities();
+  }, [])
+
   return (
     <BrowserRouter>
       <Routes>
