@@ -4,6 +4,8 @@ import Home from './pages';
 import Items from './pages/items';
 import Salesmen from './pages/salesmen';
 import MainLayout from './layouts/main-layout';
+import Accounts from './pages/accounts';
+import Orders from './pages/orders';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Route path="/test" element={<Test />} />
           <Route path="/items" element={<Items />} />
           <Route path="/salesmen" element={<Salesmen />} />
+          <Route path="/accounts" element={<Accounts />} />
+          <Route path="/orders" element={<Orders />} />
         </Route>
       </Routes>
     </BrowserRouter>

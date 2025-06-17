@@ -27,6 +27,16 @@ export default function NavBar() {
             Salesmen
           </Link>
         </NavigationMenuLink>
+        <NavigationMenuLink asChild>
+          <Link to="/accounts">
+            Accounts
+          </Link>
+        </NavigationMenuLink>
+        <NavigationMenuLink asChild>
+          <Link to="/orders">
+            Orders
+          </Link>
+        </NavigationMenuLink>
       </div>
       
     </NavigationMenu>
