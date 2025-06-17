@@ -9,5 +9,5 @@ export type Account = {
 export type CreateAccountDTO = {
   name: string,
   address: string,
-  barangayId: string,
+  barangayId: number,
 }
