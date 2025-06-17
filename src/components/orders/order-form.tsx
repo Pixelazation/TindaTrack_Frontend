@@ -114,7 +114,7 @@ export default function OrderForm(props: Props) {
             <Label className='mb-2'>Purchases</Label>
           </div>
           
-          <Button type="submit">Submit</Button>
+          <Button type="submit" variant="default">Submit</Button>
         </form>
       </Form>
     </>

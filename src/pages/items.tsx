@@ -81,7 +81,7 @@ export default function Items() {
       </AlertDialog>
 
       <div className='flex flex-row items-center justify-between mb-8'>
-        <h1 className='text-3xl font-bold text-primary'>
+        <h1 className='text-3xl font-bold'>
           Items
         </h1>
         <Button onClick={handleAdd}>

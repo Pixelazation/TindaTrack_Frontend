@@ -80,7 +80,7 @@ export default function Salesmen() {
       </AlertDialog>
 
       <div className='flex flex-row items-center justify-between mb-8'>
-        <h1 className='text-3xl font-bold text-primary'>
+        <h1 className='text-3xl font-bold'>
           Salesmen
         </h1>
         <Button onClick={handleAdd}>
