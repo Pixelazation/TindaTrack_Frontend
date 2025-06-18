@@ -16,6 +16,8 @@ export default function Salesmen() {
   const [salesmen, setSalesmen] = useState<Salesman[]>([]);
   const [editSalesman, setEditSalesman] = useState<Salesman | null>(null);
 
+  const [filter, setFilter] = useState<string>("");
+
   async function loadSalesmen() {
     try {
       const data = await fetchSalesmen();
@@ -88,7 +90,12 @@ export default function Salesmen() {
         </Button>
       </div>
 
-      <DataTable columns={salesmanColumns(handleEdit, handleDelete)} data={salesmen} />
+      <DataTable 
+        columns={salesmanColumns(handleEdit, handleDelete)} 
+        data={salesmen} 
+        filter={filter}
+        setFilter={setFilter}
+      />
     </div>
   )
 }

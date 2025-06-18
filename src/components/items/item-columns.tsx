@@ -9,14 +9,17 @@ export const itemColumns = (
   onDelete: (item: Item) => void
 ): ColumnDef<Item>[] => [
   {
+    id: 'name',
     accessorKey: 'name',
     header: 'Name',
   },
   {
+    id: 'itemCode',
     accessorKey: 'itemCode',
     header: 'Item Code',
   },
   {
+    id: 'unitPrice',
     accessorKey: 'unitPrice',
     header: 'Unit Price (PHP)',
     cell: row =>  {
@@ -25,6 +28,7 @@ export const itemColumns = (
     },
   },
   {
+    id: 'description',
     accessorKey: 'description',
     header: 'Description',
     cell: row => row.getValue() || '-',

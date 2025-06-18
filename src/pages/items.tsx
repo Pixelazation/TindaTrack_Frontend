@@ -16,6 +16,8 @@ export default function Items() {
   const [items, setItems] = useState<Item[]>([]);
   const [editItem, setEditItem] = useState<Item | null>(null);
 
+  const [filter, setFilter] = useState<string>("");
+
   async function loadItems() {
     try {
       const data = await fetchItems();
@@ -89,7 +91,12 @@ export default function Items() {
         </Button>
       </div>
 
-      <DataTable columns={itemColumns(handleEdit, handleDelete)} data={items} />
+      <DataTable
+        columns={itemColumns(handleEdit, handleDelete)}
+        data={items}
+        filter={filter}
+        setFilter={setFilter}
+      />
       
     </div>
   )
