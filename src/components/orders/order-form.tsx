@@ -12,6 +12,8 @@ import { type Purchase } from '../../types/purchase';
 import { ComboBox } from '../ui/combo-box';
 import { DatePicker } from '../ui/date-picker';
 import { Label } from '../ui/label';
+import PurchaseForm from './purchase-form';
+import PurchaseItem from './purchase-item';
 
 const orderFormSchema = z.object({
   accountId: z.number().int().positive({
@@ -29,6 +31,50 @@ interface Props {
   closeForm: () => void;
   order: Order | null;
 }
+
+export const samplePurchases: Purchase[] = [
+  {
+    id: 1,
+    orderId: 1001,
+    itemName: "Red Ballpen",
+    quantity: 10,
+    unitPrice: 5.25,
+    totalAmount: 52.5,
+  },
+  {
+    id: 2,
+    orderId: 1001,
+    itemName: "Notebook - College Ruled",
+    quantity: 5,
+    unitPrice: 35.0,
+    totalAmount: 175.0,
+  },
+  {
+    id: 3,
+    orderId: 1002,
+    itemName: "Bond Paper (A4, 500 sheets)",
+    quantity: 2,
+    unitPrice: 240.0,
+    totalAmount: 480.0,
+  },
+  {
+    id: 4,
+    orderId: 1003,
+    itemName: "Stapler",
+    quantity: 1,
+    unitPrice: 80.5,
+    totalAmount: 80.5,
+  },
+  {
+    id: 5,
+    orderId: 1003,
+    itemName: "Permanent Marker (Black)",
+    quantity: 4,
+    unitPrice: 18.75,
+    totalAmount: 75.0,
+  },
+];
+
 
 export default function OrderForm(props: Props) {
   const { closeForm, order } = props;
@@ -68,6 +114,8 @@ export default function OrderForm(props: Props) {
     closeForm();
   }
 
+  const totalAmount = samplePurchases.reduce((sum, purchase) => sum + purchase.totalAmount, 0);
+
   return (
     <>
       <DialogTitle className="text-3xl font-bold mb-4">
@@ -75,7 +123,7 @@ export default function OrderForm(props: Props) {
       </DialogTitle>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="max-h-128 pr-4 flex flex-col space-y-6 overflow-y-scroll">
 
           <div className="grow">
             <Label className='mb-2'>Account</Label>
@@ -110,10 +158,15 @@ export default function OrderForm(props: Props) {
             </div>
           </div>
 
-          <div className="grow">
-            <Label className='mb-2'>Purchases</Label>
+          <PurchaseForm />
+
+          {samplePurchases.map(purchase => <PurchaseItem purchase={purchase} />)}
+
+          <div className="text-right font-semibold text-lg">
+            <span>Total: </span>
+            <span className="font-normal underline">PHP {totalAmount.toFixed(2)}</span>
           </div>
-          
+
           <Button type="submit" variant="default">Submit</Button>
         </form>
       </Form>

@@ -46,7 +46,6 @@ export default function DataManager<T extends { id: number }> (props: Props<T>) 
   function handleEdit(item: T) {
     setEditItem(item);
     setOpenForm(true);
-    console.log(item);
   }
 
   function handleDelete(item: T) {
@@ -79,7 +78,7 @@ export default function DataManager<T extends { id: number }> (props: Props<T>) 
     <div className='px-32 py-8'>
 
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogContent>
+        <DialogContent className="w-1/2">
           <AddForm closeForm={() => setOpenForm(false)} item={editItem} />
         </DialogContent>
       </Dialog>
