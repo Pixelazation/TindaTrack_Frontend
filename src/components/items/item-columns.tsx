@@ -19,7 +19,6 @@ export const itemColumns = (
     header: 'Item Code',
   },
   {
-    id: 'unitPrice',
     accessorKey: 'unitPrice',
     header: 'Unit Price (PHP)',
     cell: row =>  {

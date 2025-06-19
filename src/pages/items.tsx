@@ -16,11 +16,13 @@ export default function Items() {
   const [items, setItems] = useState<Item[]>([]);
   const [editItem, setEditItem] = useState<Item | null>(null);
 
+  const [query, setQuery]  = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
 
   async function loadItems() {
     try {
-      const data = await fetchItems();
+      const data = await fetchItems(page, 10, query, filter);
       setItems(data);
     } catch (error) {
       console.error("Failed to fetch items:", error);
@@ -61,7 +63,7 @@ export default function Items() {
   useEffect(() => {
     if (!openForm)
       loadItems();
-  }, [openForm]);
+  }, [openForm, query, filter, page]);
 
   return (
     <div className='px-32 py-8'>
@@ -96,6 +98,10 @@ export default function Items() {
         data={items}
         filter={filter}
         setFilter={setFilter}
+        page={page}
+        pageSize={10}
+        setPage={setPage}
+        setQuery={setQuery}
       />
       
     </div>

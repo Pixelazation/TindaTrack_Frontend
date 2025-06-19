@@ -1,8 +1,21 @@
 import type { CreateItemDTO, Item } from '../types/item';
 import api from "./axios";
 
-export async function fetchItems(): Promise<Item[]> {
-  const res = await api.get("/items");
+export async function fetchItems(
+  page: number = 1,
+  pageSize: number = 10,
+  searchQuery?: string,
+  filter?: string,
+): Promise<Item[]> {
+  const params = new URLSearchParams;
+
+  params.append("page", String(page));
+  params.append("pageSize", String(pageSize));
+
+  if (searchQuery) params.append("searchQuery", searchQuery);
+  if (filter) params.append("filter", filter);
+
+  const res = await api.get(`items?${params.toString()}`);
   return res.data;
 }
 

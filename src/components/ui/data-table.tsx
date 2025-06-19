@@ -11,8 +11,8 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
+  // ChevronsLeft,
+  // ChevronsRight,
 } from "lucide-react"
 
 import {
@@ -24,14 +24,18 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from './button'
-import { Input } from './input'
 import { ComboBox } from './combo-box'
+import { SearchInput } from './search-input'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   filter: string
   setFilter: (value: string) => void
+  page: number
+  pageSize: number
+  setPage: (value: number) => void
+  setQuery: (value: string) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -39,6 +43,10 @@ export function DataTable<TData, TValue>({
   data,
   filter,
   setFilter,
+  page,
+  pageSize,
+  setPage,
+  setQuery
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -49,57 +57,37 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center justify-between gap-8 py-4">
+      <div className="flex items-center justify-between gap-8">
         <div className="flex flex-row grow items-center gap-2 py-4">
-          <Input placeholder="Search" />
+          <SearchInput setQuery={setQuery} />
           <ComboBox 
-            options={columns.map(col => ({value: col.id || "", label: col.header as string}))}
+            options={columns.filter(col => col.header && col.id).map(col => ({value: col.id || "", label: col.header as string}))}
             setValue={(val) => setFilter(val as string)}
             value={filter}
-            placeholder="Select filter"
+            placeholder="Select column filter"
           />
         </div>
         <div className="flex items-center justify-end space-x-2">
           <Button
             variant="outline"
             size="icon"
-            className="size-8 lg:flex"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <span className="sr-only">Go to first page</span>
-            <ChevronsLeft />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
             className="size-8"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => setPage(page - 1)}
+            disabled={page == 1}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeft />
           </Button>
-          <span className="select-none">Page Number</span>
+          <span className="select-none">{page}</span>
           <Button
             variant="outline"
             size="icon"
             className="size-8"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => setPage(page + 1)}
+            disabled={pageSize > data.length}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRight />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-8 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            <span className="sr-only">Go to last page</span>
-            <ChevronsRight />
           </Button>
         </div>
       </div>
