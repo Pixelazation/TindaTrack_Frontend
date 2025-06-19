@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { z } from "zod";
 import { ComboBox } from '../ui/combo-box';
 import { Label } from '../ui/label';
+import type { FormProps } from '../../interfaces/form';
 
 const accountFormSchema = z.object({
   name: z.string().min(1, {
@@ -25,22 +26,21 @@ const accountFormSchema = z.object({
   }),
 })
 
-interface Props {
-  closeForm: () => void;
-  account: Account | null;
-}
-
-export default function AccountForm(props: Props) {
-  const { closeForm, account } = props;
+export default function AccountForm(props: FormProps<Account>) {
+  const { closeForm, item: account } = props;
   const { municipalityOptions, barangayOptions, setBarangays } = useLocationDropdown();
-  const [municipality, setMunicipality] = useState<number>(0);
+  const [municipality, setMunicipality] = useState<number>(
+    municipalityOptions.find(a => a.name == account?.municipalityName)?.id || 0
+  );
 
   const isEdit = account !== null;
 
   const form = useForm<z.infer<typeof accountFormSchema>>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: isEdit ? {
-      ...account
+      name: account.name,
+      address: account.address,
+      barangayId: 0,
     } : {
       name: '',
       address: '',
@@ -71,6 +71,21 @@ export default function AccountForm(props: Props) {
   useEffect(() => {
     if (municipality > 0) setBarangays(municipality);
   }, [municipality, setBarangays]);
+
+  useEffect(() => {
+    if (account) {
+      setBarangays(municipality);
+    }
+  }, [])
+
+  useEffect(() => {
+    if (account && barangayOptions.length > 0) {
+      const barangay = barangayOptions.find(b => b.name === account.barangayName);
+      if (barangay) {
+        form.setValue('barangayId', barangay.id);
+      }
+    }
+  }, [barangayOptions]);
 
   return (
     <>

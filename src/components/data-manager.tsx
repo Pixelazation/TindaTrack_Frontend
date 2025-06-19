@@ -17,7 +17,7 @@ interface Props<T extends { id: number }> {
 }
 
 export default function DataManager<T extends { id: number }> (props: Props<T>) {
-  const { addForm, deleteItem, fetchItems, columns, title, itemName } = props;
+  const { addForm: AddForm, deleteItem, fetchItems, columns, title, itemName } = props;
 
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
@@ -46,6 +46,7 @@ export default function DataManager<T extends { id: number }> (props: Props<T>) 
   function handleEdit(item: T) {
     setEditItem(item);
     setOpenForm(true);
+    console.log(item);
   }
 
   function handleDelete(item: T) {
@@ -79,7 +80,7 @@ export default function DataManager<T extends { id: number }> (props: Props<T>) 
 
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         <DialogContent>
-          {addForm({closeForm: () => setOpenForm(false), item: editItem})}
+          <AddForm closeForm={() => setOpenForm(false)} item={editItem} />
         </DialogContent>
       </Dialog>
 
@@ -98,7 +99,7 @@ export default function DataManager<T extends { id: number }> (props: Props<T>) 
           {title}
         </h1>
         <Button onClick={handleAdd}>
-          <LucidePlus /> Add <span className="capitalize">{itemName}</span>
+          <LucidePlus /><span className="capitalize">Add {itemName}</span>
         </Button>
       </div>
 

@@ -19,7 +19,7 @@ export async function fetchSalesmen(
   return res.data;
 }
 
-export async function fetchAccount(id: number): Promise<Salesman> {
+export async function fetchSalesman(id: number): Promise<Salesman> {
   const res = await api.get(`/salesmen/${id}`);
   return res.data;
 }

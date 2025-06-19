@@ -1,4 +1,5 @@
 import { createSalesman, editSalesman } from '../../api/salesmen';
+import type { FormProps } from '../../interfaces/form';
 import type { Salesman } from '../../types/salesman';
 import { Button } from '../ui/button';
 import { DialogTitle } from '../ui/dialog';
@@ -18,13 +19,8 @@ const salesmanFormSchema = z.object({
   }),
 })
 
-interface Props {
-  closeForm: () => void;
-  salesman: Salesman | null;
-}
-
-export default function SalesmanForm(props: Props) {
-  const { closeForm, salesman } = props;
+export default function SalesmanForm(props: FormProps<Salesman>) {
+  const { closeForm, item: salesman } = props;
 
   const isEdit = salesman !== null;
 
