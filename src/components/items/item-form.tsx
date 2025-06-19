@@ -1,4 +1,5 @@
 import { createItem, editItem } from '../../api/items';
+import type { FormProps } from '../../interfaces/form';
 import type { Item } from '../../types/item';
 import { Button } from '../ui/button';
 import { DialogTitle } from '../ui/dialog';
@@ -32,12 +33,7 @@ const itemFormSchema = z.object({
   }).optional(),
 })
 
-interface Props {
-  closeForm: () => void;
-  item: Item | null;
-}
-
-export default function ItemForm(props: Props) {
+export default function ItemForm(props: FormProps<Item>) {
   const { closeForm, item } = props;
 
   const isEdit = item !== null;
