@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Purchase } from '../../types/purchase';
 import { Button } from '../ui/button';
-import { Check, Edit } from 'lucide-react';
+import { Check, Delete, Edit, Trash } from 'lucide-react';
 import { Input } from '../ui/input';
 
 interface Props {
@@ -55,9 +55,12 @@ export default function PurchaseItem({ purchase, onUpdate }: Props) {
             PHP {unitPrice.toFixed(2)}
           </span>
           <span className="text-gray-600">{quantity}</span>
-          <span className="col-span-2">PHP {totalAmount.toFixed(2)}</span>
+          <span >PHP {totalAmount.toFixed(2)}</span>
           <Button variant="outline" onClick={() => setEditing(true)}>
             <Edit />
+          </Button>
+          <Button variant="destructive">
+            <Trash />
           </Button>
         </>
       )}
