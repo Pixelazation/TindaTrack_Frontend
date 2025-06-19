@@ -32,84 +32,9 @@ const orderFormSchema = z.object({
   }),
 })
 
-const samplePurchases: Purchase[] = [
-  {
-    id: 1,
-    orderId: 1001,
-    item: {
-      id: 1,
-      itemCode: "ITEM001",
-      name: "Ballpen (Blue)",
-      description: "Smooth writing, 0.5mm tip",
-      unitPrice: 12.5,
-    },
-    quantity: 10,
-    unitPrice: 12.5,
-    totalAmount: 125.0,
-  },
-  {
-    id: 2,
-    orderId: 1001,
-    item: {
-      id: 2,
-      itemCode: "ITEM002",
-      name: "Notebook",
-      description: "Spiral bound, 100 pages",
-      unitPrice: 45.0,
-    },
-    quantity: 3,
-    unitPrice: 45.0,
-    totalAmount: 135.0,
-  },
-  {
-    id: 3,
-    orderId: 1002,
-    item: {
-      id: 3,
-      itemCode: "ITEM003",
-      name: "Stapler",
-      description: "Standard size",
-      unitPrice: 85.75,
-    },
-    quantity: 1,
-    unitPrice: 85.75,
-    totalAmount: 85.75,
-  },
-  {
-    id: 4,
-    orderId: 1002,
-    item: {
-      id: 4,
-      itemCode: "ITEM004",
-      name: "Bond Paper (A4)",
-      description: "500 sheets, 80gsm",
-      unitPrice: 250.0,
-    },
-    quantity: 2,
-    unitPrice: 250.0,
-    totalAmount: 500.0,
-  },
-  {
-    id: 5,
-    orderId: 1003,
-    item: {
-      id: 5,
-      itemCode: "ITEM005",
-      name: "Highlighter (Yellow)",
-      description: "Chisel tip",
-      unitPrice: 20.0,
-    },
-    quantity: 4,
-    unitPrice: 20.0,
-    totalAmount: 80.0,
-  },
-];
-
-
-
 export default function OrderForm(props: FormProps<Order>) {
   const { closeForm, item: order } = props;
-  const [purchases, setPurchases] = useState<Purchase[]>(order?.purchases || samplePurchases);
+  const [purchases, setPurchases] = useState<Purchase[]>(order?.purchases || []);
 
   const [accountQuery, setAccountQuery] = useState<string>("");
   const [accountSuggestions, setAccountSuggestions] = useState<Account[]>([]);
@@ -157,17 +82,17 @@ export default function OrderForm(props: FormProps<Order>) {
   async function onSubmit(values: z.infer<typeof orderFormSchema>) {
     console.log("Form submitted with values:", values);
 
-    // const purchaseData = purchases.map(purchase => ({
-    //   itemId: purchase.itemId,
-    //   quantity: purchase.quantity,
-    //   unitPrice: purchase.unitPrice,
-    // }));
+    const purchaseData = purchases.map(purchase => ({
+      itemId: purchase.item.id,
+      quantity: purchase.quantity,
+      unitPrice: purchase.unitPrice,
+    }));
 
     try {
       if (isEdit)
-        await editOrder(order.id, {purchases: [], ...values});
+        await editOrder(order.id, {purchases: purchaseData, ...values});
       else
-        await createOrder({purchases: [], ...values});
+        await createOrder({purchases: purchaseData, ...values});
     } catch (error) {
       console.error("Failed to create order:", error);
     }
@@ -175,7 +100,7 @@ export default function OrderForm(props: FormProps<Order>) {
     closeForm();
   }
 
-  const totalAmount = samplePurchases.reduce((sum, purchase) => sum + purchase.totalAmount, 0);
+  const totalAmount = purchases.reduce((sum, purchase) => sum + purchase.totalAmount, 0);
 
   return (
     <>
