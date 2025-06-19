@@ -9,11 +9,6 @@ export const salesmanColumns = (
   onDelete: (salesman: Salesman) => void
 ): ColumnDef<Salesman>[] => [
   {
-    id: 'id',
-    accessorKey: 'id',
-    header: 'ID',
-  },
-  {
     id: 'firstName',
     accessorKey: 'firstName',
     header: 'First Name',

@@ -1,8 +1,21 @@
 import type { CreateSalesmanDTO, Salesman } from '../types/salesman';
 import api from "./axios";
 
-export async function fetchSalesmen(): Promise<Salesman[]> {
-  const res = await api.get("/salesmen");
+export async function fetchSalesmen(
+  page: number = 1,
+  pageSize: number = 10,
+  searchQuery?: string,
+  filter?: string,
+): Promise<Salesman[]> {
+  const params = new URLSearchParams;
+  
+  params.append("page", String(page));
+  params.append("pageSize", String(pageSize));
+
+  if (searchQuery) params.append("searchQuery", searchQuery);
+  if (filter) params.append("filter", filter);
+
+  const res = await api.get(`salesmen?${params.toString()}`);
   return res.data;
 }
 

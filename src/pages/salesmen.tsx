@@ -16,11 +16,13 @@ export default function Salesmen() {
   const [salesmen, setSalesmen] = useState<Salesman[]>([]);
   const [editSalesman, setEditSalesman] = useState<Salesman | null>(null);
 
+  const [query, setQuery]  = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
 
   async function loadSalesmen() {
     try {
-      const data = await fetchSalesmen();
+      const data = await fetchSalesmen(page, 10, query, filter);
       setSalesmen(data);
     } catch (error) {
       console.error("Failed to fetch salesmen:", error);
@@ -61,7 +63,7 @@ export default function Salesmen() {
   useEffect(() => {
     if (!openForm)
       loadSalesmen();
-  }, [openForm]);
+  }, [openForm, query, filter, page]);
 
   return (
     <div className='px-32 py-8'>
@@ -95,6 +97,10 @@ export default function Salesmen() {
         data={salesmen} 
         filter={filter}
         setFilter={setFilter}
+        page={page}
+        pageSize={10}
+        setPage={setPage}
+        setQuery={setQuery}
       />
     </div>
   )
