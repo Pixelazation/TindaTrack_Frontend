@@ -1,8 +1,8 @@
 import type { Item } from './item'
 
 export type Purchase = {
-  id: number,
-  orderId: number,
+  id?: number,
+  orderId?: number,
   item: Item,
   quantity: number,
   unitPrice: number,

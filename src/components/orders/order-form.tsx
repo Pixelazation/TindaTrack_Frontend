@@ -223,7 +223,7 @@ export default function OrderForm(props: FormProps<Order>) {
             </div>
           </div>
 
-          <PurchaseForm />
+          <PurchaseForm onSubmit={(purchase) => setPurchases([...purchases, purchase])} />
 
           {purchases.map(purchase => <PurchaseItem purchase={purchase} />)}
 

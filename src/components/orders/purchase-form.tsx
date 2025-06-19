@@ -11,6 +11,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import type { Item } from '../../types/item';
 import { fetchItems } from '../../api/items';
+import type { Purchase } from '../../types/purchase';
 
 const purchaseFormSchema = z.object({
   itemId: z.number().int().positive({
@@ -31,7 +32,13 @@ const purchaseFormSchema = z.object({
   }),
 })
 
-export default function PurchaseForm() {
+interface Props {
+  onSubmit: (purchase: Purchase) => void;
+}
+
+export default function PurchaseForm(props: Props) {
+  const { onSubmit } = props;
+
   const [itemQuery, setItemQuery] = useState<string>("");
   const [itemSuggestions, setItemSuggestions] = useState<Item[]>([]);
 
@@ -44,24 +51,24 @@ export default function PurchaseForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof purchaseFormSchema>) {
+  async function handleSubmit(values: z.infer<typeof purchaseFormSchema>) {
     console.log("Form submitted with values:", values);
 
-    // const purchaseData = purchases.map(purchase => ({
-    //   itemId: purchase.itemId,
-    //   quantity: purchase.quantity,
-    //   unitPrice: purchase.unitPrice,
-    // }));
+    const { itemId, unitPrice, quantity } = values;
 
-    // try {
-    //   if (isEdit)
-    //     await editOrder(order.id, {purchases: [], ...values});
-    //   else
-    //     await createOrder({purchases: [], ...values});
-    // } catch (error) {
-    //   console.error("Failed to create order:", error);
-    // }
+    const newPurchase = {
+      item: itemSuggestions.find(item => item.id == itemId)!,
+      unitPrice: unitPrice,
+      quantity: quantity,
+      totalAmount: unitPrice * quantity,
+    }
 
+    onSubmit(newPurchase);
+  }
+
+  function updateItem(itemId: number) {
+    form.setValue('itemId', Number(itemId));
+    form.setValue('unitPrice', itemSuggestions.find(item => item.id == itemId)!.id);
   }
 
   useEffect(() => {
@@ -80,7 +87,7 @@ export default function PurchaseForm() {
     <div className="flex flex-col grow">
       <Label className='mb-2 w-fit self-center text-lg'>Purchases</Label>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-6">
+        <div className="flex flex-col space-y-6">
           <div className="grow">
             <Label className='mb-2'>Item</Label>
             <div className='flex flex-row'>
@@ -88,7 +95,7 @@ export default function PurchaseForm() {
                 options={itemSuggestions.map(({id, name}) => ({value: id, label: name}))} // Replace with actual item options
                 placeholder='Select Item'
                 value={form.watch('itemId')}
-                setValue={(value) => form.setValue('itemId', Number(value))}
+                setValue={(value) => updateItem(value as number)}
                 className="grow"
                 query={itemQuery}
                 setQuery={setItemQuery}
@@ -125,9 +132,9 @@ export default function PurchaseForm() {
               )}
             />
 
-            <Button type="submit" variant="secondary">Add Item</Button>
+            <Button type="submit" variant="secondary" onClick={form.handleSubmit(handleSubmit)}>Add Item</Button>
           </div>
-        </form>
+        </div>
       </Form>
     </div>
   )
