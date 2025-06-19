@@ -1,7 +1,9 @@
+import type { Item } from './item'
+
 export type Purchase = {
   id: number,
   orderId: number,
-  itemName: string,
+  item: Item,
   quantity: number,
   unitPrice: number,
   totalAmount: number,

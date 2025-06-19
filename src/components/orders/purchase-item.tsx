@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Purchase } from '../../types/purchase';
 import { Button } from '../ui/button';
-import { Check, Delete, Edit, Trash } from 'lucide-react';
+import { Check, Edit, Trash } from 'lucide-react';
 import { Input } from '../ui/input';
 
 interface Props {
@@ -16,18 +16,19 @@ export default function PurchaseItem({ purchase, onUpdate }: Props) {
   const [unitPrice, setUnitPrice] = useState<number>(purchase.unitPrice);
 
   const totalAmount = quantity * unitPrice;
+  const item = purchase.item;
 
   function handleSave() {
-    // const updated = { ...purchase, quantity, unitPrice, totalAmount };
-    // onUpdate?.(updated);
+    const updated = { ...purchase, quantity, unitPrice, totalAmount };
+    onUpdate?.(updated);
     setEditing(false);
   }
 
   return (
     <div className="grid grid-cols-8 items-center gap-4 text-xs">
       <div className="flex flex-col col-span-3">
-        <span className="text-sm">{purchase.itemName}</span>
-        <span className="text-gray-600">Item Code</span>
+        <span className="text-sm">{item.name}</span>
+        <span className="text-gray-600">{item.itemCode}</span>
       </div>
 
       {editing ? (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createOrder, editOrder } from '../../api/orders';
 import type { Order } from '../../types/order';
 import { Button } from '../ui/button';
@@ -15,6 +15,10 @@ import { Label } from '../ui/label';
 import PurchaseForm from './purchase-form';
 import PurchaseItem from './purchase-item';
 import type { FormProps } from '../../interfaces/form';
+import { type Account } from '../../types/account';
+import type { Salesman } from '../../types/salesman';
+import { fetchAccounts } from '../../api/accounts';
+import { fetchSalesmen } from '../../api/salesmen';
 
 const orderFormSchema = z.object({
   accountId: z.number().int().positive({
@@ -28,53 +32,90 @@ const orderFormSchema = z.object({
   }),
 })
 
-export const samplePurchases: Purchase[] = [
+const samplePurchases: Purchase[] = [
   {
     id: 1,
     orderId: 1001,
-    itemName: "Red Ballpen",
+    item: {
+      id: 1,
+      itemCode: "ITEM001",
+      name: "Ballpen (Blue)",
+      description: "Smooth writing, 0.5mm tip",
+      unitPrice: 12.5,
+    },
     quantity: 10,
-    unitPrice: 5.25,
-    totalAmount: 52.5,
+    unitPrice: 12.5,
+    totalAmount: 125.0,
   },
   {
     id: 2,
     orderId: 1001,
-    itemName: "Notebook - College Ruled",
-    quantity: 5,
-    unitPrice: 35.0,
-    totalAmount: 175.0,
+    item: {
+      id: 2,
+      itemCode: "ITEM002",
+      name: "Notebook",
+      description: "Spiral bound, 100 pages",
+      unitPrice: 45.0,
+    },
+    quantity: 3,
+    unitPrice: 45.0,
+    totalAmount: 135.0,
   },
   {
     id: 3,
     orderId: 1002,
-    itemName: "Bond Paper (A4, 500 sheets)",
-    quantity: 2,
-    unitPrice: 240.0,
-    totalAmount: 480.0,
+    item: {
+      id: 3,
+      itemCode: "ITEM003",
+      name: "Stapler",
+      description: "Standard size",
+      unitPrice: 85.75,
+    },
+    quantity: 1,
+    unitPrice: 85.75,
+    totalAmount: 85.75,
   },
   {
     id: 4,
-    orderId: 1003,
-    itemName: "Stapler",
-    quantity: 1,
-    unitPrice: 80.5,
-    totalAmount: 80.5,
+    orderId: 1002,
+    item: {
+      id: 4,
+      itemCode: "ITEM004",
+      name: "Bond Paper (A4)",
+      description: "500 sheets, 80gsm",
+      unitPrice: 250.0,
+    },
+    quantity: 2,
+    unitPrice: 250.0,
+    totalAmount: 500.0,
   },
   {
     id: 5,
     orderId: 1003,
-    itemName: "Permanent Marker (Black)",
+    item: {
+      id: 5,
+      itemCode: "ITEM005",
+      name: "Highlighter (Yellow)",
+      description: "Chisel tip",
+      unitPrice: 20.0,
+    },
     quantity: 4,
-    unitPrice: 18.75,
-    totalAmount: 75.0,
+    unitPrice: 20.0,
+    totalAmount: 80.0,
   },
 ];
 
 
+
 export default function OrderForm(props: FormProps<Order>) {
   const { closeForm, item: order } = props;
-  // const [purchases, setPurchases] = useState<Purchase[]>(order?.purchases || []);
+  const [purchases, setPurchases] = useState<Purchase[]>(order?.purchases || samplePurchases);
+
+  const [accountQuery, setAccountQuery] = useState<string>("");
+  const [accountSuggestions, setAccountSuggestions] = useState<Account[]>([]);
+
+  const [salesmanQuery, setSalesmanQuery] = useState<string>("");
+  const [salesmanSuggestions, setSalesmanSuggestions] = useState<Salesman[]>([]);
 
   const isEdit = order !== null;
 
@@ -88,6 +129,30 @@ export default function OrderForm(props: FormProps<Order>) {
       date: undefined,
     },
   });
+
+  useEffect(() => {
+    async function loadAccountSuggestions() {
+      try {
+        const data = await fetchAccounts(1, 5, accountQuery, "name");
+        setAccountSuggestions(data);
+      } catch (error) {
+        console.error("Failed to fetch items:", error);
+      }
+    }
+    loadAccountSuggestions();
+  }, [accountQuery])
+
+  useEffect(() => {
+    async function loadSalesmanSuggestions() {
+      try {
+        const data = await fetchSalesmen(1, 5, salesmanQuery);
+        setSalesmanSuggestions(data);
+      } catch (error) {
+        console.error("Failed to fetch items:", error);
+      }
+    }
+    loadSalesmanSuggestions();
+  }, [salesmanQuery])
 
   async function onSubmit(values: z.infer<typeof orderFormSchema>) {
     console.log("Form submitted with values:", values);
@@ -125,10 +190,12 @@ export default function OrderForm(props: FormProps<Order>) {
             <Label className='mb-2'>Account</Label>
             <div className='flex flex-row'>
               <ComboBox 
-                options={[{value: 1, label: 'Account 1'}, {value: 2, label: 'Account 2'}]} // Replace with actual account options
+                options={accountSuggestions.map(({id, name}) => ({value: id, label: name}))} // Replace with actual account options
                 placeholder='Select Account'
                 value={form.watch('accountId')}
                 setValue={(value) => form.setValue('accountId', Number(value))}
+                query={accountQuery}
+                setQuery={setAccountQuery}
                 className="grow"
               />
             </div>
@@ -138,11 +205,13 @@ export default function OrderForm(props: FormProps<Order>) {
             <Label className='mb-2'>Salesman</Label>
             <div className='flex flex-row'>
               <ComboBox 
-                options={[{value: 1, label: 'Salesman 1'}, {value: 2, label: 'Salesman 2'}]} // Replace with actual salemen options
+                options={salesmanSuggestions.map(({id, firstName, lastName}) => ({value: id, label: `${firstName} ${lastName}`}))} // Replace with actual salemen options
                 placeholder='Select Salesman'
                 value={form.watch('salesmanId')}
                 setValue={(value) => form.setValue('salesmanId', Number(value))}
                 className="grow"
+                query={salesmanQuery}
+                setQuery={setSalesmanQuery}
               />
             </div>
           </div>
@@ -156,7 +225,7 @@ export default function OrderForm(props: FormProps<Order>) {
 
           <PurchaseForm />
 
-          {samplePurchases.map(purchase => <PurchaseItem purchase={purchase} />)}
+          {purchases.map(purchase => <PurchaseItem purchase={purchase} />)}
 
           <div className="text-right font-semibold text-lg">
             <span>Total: </span>

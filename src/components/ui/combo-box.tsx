@@ -29,12 +29,14 @@ interface Props {
   emptyText?: string,
   setValue: (value: React.Key) => void,
   value: React.Key,
+  setQuery?: (query: string) => void,
+  query?: string
 }
 
 export function ComboBox(props: Props) {
   const [open, setOpen] = React.useState(false)
   
-  const { className, options, placeholder, emptyText, setValue, value } = props;
+  const { className, options, placeholder, emptyText, setValue, value, setQuery, query } = props;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -53,7 +55,7 @@ export function ComboBox(props: Props) {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search option..." className="h-9" />
+          <CommandInput placeholder="Search option..." className="h-9" value={query} onValueChange={setQuery} />
           <CommandList>
             <CommandEmpty>{emptyText || "No option found."}</CommandEmpty>
             <CommandGroup>
