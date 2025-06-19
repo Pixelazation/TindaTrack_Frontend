@@ -1,4 +1,4 @@
-// import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 
@@ -9,6 +9,8 @@ import { z } from "zod";
 import { ComboBox } from '../ui/combo-box';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
+import type { Item } from '../../types/item';
+import { fetchItems } from '../../api/items';
 
 const purchaseFormSchema = z.object({
   itemId: z.number().int().positive({
@@ -30,6 +32,9 @@ const purchaseFormSchema = z.object({
 })
 
 export default function PurchaseForm() {
+  const [itemQuery, setItemQuery] = useState<string>("");
+  const [itemSuggestions, setItemSuggestions] = useState<Item[]>([]);
+
   const form = useForm<z.infer<typeof purchaseFormSchema>>({
     resolver: zodResolver(purchaseFormSchema),
     defaultValues: {
@@ -59,6 +64,18 @@ export default function PurchaseForm() {
 
   }
 
+  useEffect(() => {
+    async function loadItemSuggestions() {
+      try {
+        const data = await fetchItems(1, 5, itemQuery);
+        setItemSuggestions(data);
+      } catch (error) {
+        console.error("Failed to fetch items:", error);
+      }
+    }
+    loadItemSuggestions();
+  }, [itemQuery])
+
   return (
     <div className="flex flex-col grow">
       <Label className='mb-2 w-fit self-center text-lg'>Purchases</Label>
@@ -68,11 +85,13 @@ export default function PurchaseForm() {
             <Label className='mb-2'>Item</Label>
             <div className='flex flex-row'>
               <ComboBox 
-                options={[{value: 1, label: 'Item 1'}, {value: 2, label: 'Item 2'}]} // Replace with actual account options
+                options={itemSuggestions.map(({id, name}) => ({value: id, label: name}))} // Replace with actual item options
                 placeholder='Select Item'
                 value={form.watch('itemId')}
                 setValue={(value) => form.setValue('itemId', Number(value))}
                 className="grow"
+                query={itemQuery}
+                setQuery={setItemQuery}
               />
             </div>
           </div>
