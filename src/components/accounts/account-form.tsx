@@ -74,7 +74,7 @@ export default function AccountForm(props: Props) {
 
   return (
     <>
-      <DialogTitle className="text-3xl font-bold text-primary mb-4">
+      <DialogTitle className="text-3xl font-bold mb-4">
         {isEdit ? 'Edit' : 'Create New'} Account
       </DialogTitle>
 
