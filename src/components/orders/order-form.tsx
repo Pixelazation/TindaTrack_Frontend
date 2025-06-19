@@ -14,6 +14,7 @@ import { DatePicker } from '../ui/date-picker';
 import { Label } from '../ui/label';
 import PurchaseForm from './purchase-form';
 import PurchaseItem from './purchase-item';
+import type { FormProps } from '../../interfaces/form';
 
 const orderFormSchema = z.object({
   accountId: z.number().int().positive({
@@ -26,11 +27,6 @@ const orderFormSchema = z.object({
     message: "Date cannot be in the future.",
   }),
 })
-
-interface Props {
-  closeForm: () => void;
-  order: Order | null;
-}
 
 export const samplePurchases: Purchase[] = [
   {
@@ -76,8 +72,8 @@ export const samplePurchases: Purchase[] = [
 ];
 
 
-export default function OrderForm(props: Props) {
-  const { closeForm, order } = props;
+export default function OrderForm(props: FormProps<Order>) {
+  const { closeForm, item: order } = props;
   // const [purchases, setPurchases] = useState<Purchase[]>(order?.purchases || []);
 
   const isEdit = order !== null;
