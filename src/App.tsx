@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import Test from './pages/test';
 import Home from './pages';
 import Items from './pages/items';
 import Salesmen from './pages/salesmen';
@@ -21,7 +20,6 @@ function App() {
       <Routes>
         <Route element={<MainLayout/>}>
           <Route index element={<Home />} />
-          <Route path="/test" element={<Test />} />
           <Route path="/items" element={<Items />} />
           <Route path="/salesmen" element={<Salesmen />} />
           <Route path="/accounts" element={<Accounts />} />

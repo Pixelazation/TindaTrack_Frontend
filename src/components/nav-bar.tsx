@@ -1,4 +1,5 @@
 import { NavigationMenu, NavigationMenuLink } from '@/components/ui/navigation-menu';
+import { Truck } from 'lucide-react';
 import { Link } from 'react-router';
 
 export default function NavBar() {
@@ -7,16 +8,18 @@ export default function NavBar() {
 
       <NavigationMenuLink asChild>
         <Link to="/">
-          TindaTrack
+          <div className="flex flex-row items-center gap-2 font-bold text-xl text-primary">
+            <Truck className="text-primary" /> <span>TindaTrack</span>
+          </div>
         </Link>
       </NavigationMenuLink>
 
-      <div className='flex flex-row'>
-        <NavigationMenuLink asChild>
+      <div className='flex flex-row font-semibold'>
+        {/* <NavigationMenuLink asChild>
           <Link to="/">
             Map
           </Link>
-        </NavigationMenuLink>
+        </NavigationMenuLink> */}
         <NavigationMenuLink asChild>
           <Link to="/items">
             Items
