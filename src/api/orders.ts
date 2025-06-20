@@ -1,4 +1,5 @@
 import type { CreateOrderDTO, Order } from '../types/order';
+import type { Purchase } from '../types/purchase';
 import api from "./axios";
 
 export async function fetchOrders(
@@ -21,6 +22,11 @@ export async function fetchOrders(
 
 export async function fetchOrder(id: number): Promise<Order> {
   const res = await api.get(`/orders/${id}`);
+  return res.data;
+}
+
+export async function fetchOrderPurchases(id: number): Promise<Purchase[]> {
+  const res = await api.get(`/orders/${id}/purchases`);
   return res.data;
 }
 

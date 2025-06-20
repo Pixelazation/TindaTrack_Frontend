@@ -6,10 +6,11 @@ import { Input } from '../ui/input';
 
 interface Props {
   purchase: Purchase;
-  onUpdate?: (updated: Purchase) => void;
+  onUpdate?: (purchase: Purchase) => void;
+  onDelete: (purchase: Purchase) => void;
 }
 
-export default function PurchaseItem({ purchase, onUpdate }: Props) {
+export default function PurchaseItem({ purchase, onUpdate, onDelete }: Props) {
   const [editing, setEditing] = useState<boolean>(false);
 
   const [quantity, setQuantity] = useState<number>(purchase.quantity);
@@ -19,8 +20,8 @@ export default function PurchaseItem({ purchase, onUpdate }: Props) {
   const item = purchase.item;
 
   function handleSave() {
-    const updated = { ...purchase, quantity, unitPrice, totalAmount };
-    onUpdate?.(updated);
+    // const updated = { ...purchase, quantity, unitPrice, totalAmount };
+    // onUpdate?.(updated);
     setEditing(false);
   }
 
@@ -46,7 +47,7 @@ export default function PurchaseItem({ purchase, onUpdate }: Props) {
           <span className="font-medium col-span-2">
             PHP {(unitPrice * quantity).toFixed(2)}
           </span>
-          <Button variant="outline" onClick={handleSave}>
+          <Button type="button" variant="outline" onClick={handleSave}>
             <Check />
           </Button>
         </>
@@ -57,10 +58,10 @@ export default function PurchaseItem({ purchase, onUpdate }: Props) {
           </span>
           <span className="text-gray-600">{quantity}</span>
           <span >PHP {totalAmount.toFixed(2)}</span>
-          <Button variant="outline" onClick={() => setEditing(true)}>
+          <Button type="button" variant="outline" onClick={() => setEditing(true)}>
             <Edit />
           </Button>
-          <Button variant="destructive">
+          <Button type="button" variant="destructive" onClick={() => onDelete(purchase)}>
             <Trash />
           </Button>
         </>

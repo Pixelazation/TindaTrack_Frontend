@@ -1,12 +1,13 @@
-import type { CreatePurchaseDTO, Purchase } from './purchase'
+import type { CreatePurchaseDTO } from './purchase'
 
 export type Order = {
   id: number,
+  accountId: number,
   accountName: string,
+  salesmanId: number,
   salesmanName: string,
   date: Date,
   totalSales: number,
-  purchases: Purchase[],
 }
 
 export type CreateOrderDTO = {

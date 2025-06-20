@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createOrder, editOrder } from '../../api/orders';
+import { createOrder, editOrder, fetchOrderPurchases } from '../../api/orders';
 import type { Order } from '../../types/order';
 import { Button } from '../ui/button';
 import { DialogTitle } from '../ui/dialog';
@@ -34,12 +34,12 @@ const orderFormSchema = z.object({
 
 export default function OrderForm(props: FormProps<Order>) {
   const { closeForm, item: order } = props;
-  const [purchases, setPurchases] = useState<Purchase[]>(order?.purchases || []);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
 
-  const [accountQuery, setAccountQuery] = useState<string>("");
+  const [accountQuery, setAccountQuery] = useState<string>(order?.accountName || "");
   const [accountSuggestions, setAccountSuggestions] = useState<Account[]>([]);
 
-  const [salesmanQuery, setSalesmanQuery] = useState<string>("");
+  const [salesmanQuery, setSalesmanQuery] = useState<string>(order?.salesmanName || "");
   const [salesmanSuggestions, setSalesmanSuggestions] = useState<Salesman[]>([]);
 
   const isEdit = order !== null;
@@ -47,13 +47,24 @@ export default function OrderForm(props: FormProps<Order>) {
   const form = useForm<z.infer<typeof orderFormSchema>>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: isEdit ? {
-      ...order
+      accountId: order.accountId,
+      salesmanId: order.salesmanId,
+      date: new Date(order.date),
     } : {
       accountId: 0,
       salesmanId: 0,
       date: undefined,
     },
   });
+
+  useEffect(() => {
+    async function retrievePurchases(id: number) {
+      const purchaseList = await fetchOrderPurchases(id);
+      if (purchaseList) setPurchases(purchaseList);
+    }
+    
+    if (isEdit) retrievePurchases(order.id);
+  }, [])
 
   useEffect(() => {
     async function loadAccountSuggestions() {
@@ -98,6 +109,10 @@ export default function OrderForm(props: FormProps<Order>) {
     }
 
     closeForm();
+  }
+
+  function removePurchase(purchase: Purchase) {
+    setPurchases(purchases.filter(p => p != purchase))
   }
 
   const totalAmount = purchases.reduce((sum, purchase) => sum + purchase.totalAmount, 0);
@@ -150,7 +165,13 @@ export default function OrderForm(props: FormProps<Order>) {
 
           <PurchaseForm onSubmit={(purchase) => setPurchases([...purchases, purchase])} />
 
-          {purchases.map(purchase => <PurchaseItem purchase={purchase} />)}
+          {purchases.map((purchase, index) => 
+            <PurchaseItem
+              key={index}
+              purchase={purchase}
+              onDelete={removePurchase}
+            />
+          )}
 
           <div className="text-right font-semibold text-lg">
             <span>Total: </span>
