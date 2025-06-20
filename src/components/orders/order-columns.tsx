@@ -9,6 +9,11 @@ export const orderColumns = (
   onDelete: (order: Order) => void
 ): ColumnDef<Order>[] => [
   {
+    id: 'id',
+    accessorKey: 'id',
+    header: 'ID',
+  },
+  {
     id: 'accountName',
     accessorKey: 'accountName',
     header: 'Account',

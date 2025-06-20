@@ -5,12 +5,13 @@ import { Check, Edit, Trash } from 'lucide-react';
 import { Input } from '../ui/input';
 
 interface Props {
+  index: number;
   purchase: Purchase;
-  onUpdate?: (purchase: Purchase) => void;
+  onUpdate?: (index: number, updated: Purchase) => void;
   onDelete: (purchase: Purchase) => void;
 }
 
-export default function PurchaseItem({ purchase, onUpdate, onDelete }: Props) {
+export default function PurchaseItem({ index, purchase, onUpdate, onDelete }: Props) {
   const [editing, setEditing] = useState<boolean>(false);
 
   const [quantity, setQuantity] = useState<number>(purchase.quantity);
@@ -20,8 +21,9 @@ export default function PurchaseItem({ purchase, onUpdate, onDelete }: Props) {
   const item = purchase.item;
 
   function handleSave() {
-    // const updated = { ...purchase, quantity, unitPrice, totalAmount };
-    // onUpdate?.(updated);
+    const updated = { ...purchase, quantity, unitPrice, totalAmount: totalAmount };
+    console.log(updated);
+    onUpdate?.(index, updated);
     setEditing(false);
   }
 

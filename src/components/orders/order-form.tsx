@@ -111,6 +111,13 @@ export default function OrderForm(props: FormProps<Order>) {
     closeForm();
   }
 
+  function updatePurchase(index: number, updated: Purchase) {
+    setPurchases(prev => {
+      const copy = prev.map((p, i) => (i === index ? { ...updated } : p));
+      return copy;
+    });
+  }
+
   function removePurchase(purchase: Purchase) {
     setPurchases(purchases.filter(p => p != purchase))
   }
@@ -168,8 +175,10 @@ export default function OrderForm(props: FormProps<Order>) {
           {purchases.map((purchase, index) => 
             <PurchaseItem
               key={index}
+              index={index}
               purchase={purchase}
               onDelete={removePurchase}
+              onUpdate={updatePurchase}
             />
           )}
 
