@@ -68,7 +68,7 @@ export default function PurchaseForm(props: Props) {
 
   function updateItem(itemId: number) {
     form.setValue('itemId', Number(itemId));
-    form.setValue('unitPrice', itemSuggestions.find(item => item.id == itemId)!.id);
+    form.setValue('unitPrice', itemSuggestions.find(item => item.id == itemId)!.unitPrice);
   }
 
   useEffect(() => {
